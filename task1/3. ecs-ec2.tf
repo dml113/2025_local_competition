@@ -157,6 +157,13 @@ resource "aws_service_discovery_service" "nginx" {
   health_check_custom_config {
     failure_threshold = 1
   }
+
+  # health_check_config {
+  #   type              = "HTTP"
+  #   resource_path     = "/health"
+  #   failure_threshold = 3
+  #   port              = 80
+  # }
 }
 
 ########################################################################################################
