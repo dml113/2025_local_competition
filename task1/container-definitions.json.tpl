@@ -18,6 +18,16 @@
         "awslogs-region": "ap-northeast-2",
         "awslogs-stream-prefix": "nginx"
       }
-    }
+    },
+    "environment": [
+      {
+        "name": "ENV",
+        "value": "production"
+      },
+      {
+        "name": "APP_PORT",
+        "value": "80"
+      }
+    ]
   }
 ]

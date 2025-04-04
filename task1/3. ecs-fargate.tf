@@ -1,84 +1,10 @@
 # ################################################################################################################################################
-# #                                                          Service Security Group                                                              #
-# ################################################################################################################################################
-
-# resource "aws_security_group" "ecs_service_sg" {
-#   name        = "ecs-service-sg"
-#   description = "Security group for ECS service (allow HTTP from ALB)"
-#   vpc_id      = module.vpc.vpc_id
-
-#   ingress {
-#     description      = "Allow HTTP from ALB"
-#     from_port        = 80
-#     to_port          = 80
-#     protocol         = "tcp"
-#     cidr_blocks      = ["0.0.0.0/0"]  # 필요시 ALB SG로 제한 가능
-#   }
-
-#   egress {
-#     from_port        = 0
-#     to_port          = 0
-#     protocol         = "-1"
-#     cidr_blocks      = ["0.0.0.0/0"]
-#   }
-
-#   tags = {
-#     Name = "ecs-service-sg"
-#   }
-# }
-
-# ################################################################################################################################################
 # #                                                               ECS Cluster                                                                    #
 # ################################################################################################################################################
 
 # # define Cluster
 # resource "aws_ecs_cluster" "ecs_cluster" {
 #   name = "iac-ecs-cluster"
-# }
-
-# ################################################################################################################################################
-# #                                                          Task Definitons - Role                                                              #
-# ################################################################################################################################################
-
-# resource "aws_iam_role" "ecs_task_execution_role" {
-#   name = "ecsTaskExecutionRole"
-
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [{
-#       Action = "sts:AssumeRole"
-#       Effect = "Allow"
-#       Principal = {
-#         Service = "ecs-tasks.amazonaws.com"
-#       }
-#     }]
-#   })
-# }
-
-# resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
-#   role       = aws_iam_role.ecs_task_execution_role.name
-#   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-# }
-
-# resource "aws_iam_role" "ecs_task_role" {
-#   name = "ecsTaskAppRole"
-
-#   assume_role_policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [{
-#       Action = "sts:AssumeRole"
-#       Effect = "Allow"
-#       Principal = {
-#         Service = "ecs-tasks.amazonaws.com"
-#       }
-#     }]
-#   })
-# }
-
-# resource "aws_iam_policy_attachment" "ecs_task_dynamodb_attach" {
-#   name       = "attach-dynamodb-access"
-#   roles      = [aws_iam_role.ecs_task_role.name]
-#   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 # }
 
 # ################################################################################################################################################
@@ -106,30 +32,70 @@
 #   retention_in_days = 7
 # }
 
-# ################################################################################################################################################
-# #                                                             ECS Service                                                                      #
-# ################################################################################################################################################
+# ########################################################################################################
+# #                                  Service Discovery Namespace (skills.local)                          #
+# ########################################################################################################
+
+# resource "aws_service_discovery_private_dns_namespace" "skills_local" {
+#   name        = "skills.local"
+#   description = "Private DNS namespace for ECS service discovery"
+#   vpc         = module.vpc.vpc_id
+# }
+
+# ########################################################################################################
+# #                                      Service Discovery Service (nginx)                               #
+# ########################################################################################################
+
+# resource "aws_service_discovery_service" "nginx" {
+#   name = "nginx"
+
+#   dns_config {
+#     namespace_id = aws_service_discovery_private_dns_namespace.skills_local.id
+
+#     dns_records {
+#       type = "A"
+#       ttl  = 10
+#     }
+
+#     routing_policy = "MULTIVALUE"
+#   }
+
+#   health_check_custom_config {
+#     failure_threshold = 1
+#   }
+# }
+
+# ########################################################################################################
+# #                                        ECS Service (with Service Discovery)                          #
+# ########################################################################################################
 
 # resource "aws_ecs_service" "ecs_service" {
 #   name            = "iac-nginx-svc"
-#   cluster         = "${aws_ecs_cluster.ecs_cluster.id}"
-#   task_definition = "${aws_ecs_task_definition.ecs_task.arn}"
-#   desired_count   = "2"
+#   cluster         = aws_ecs_cluster.ecs_cluster.id
+#   task_definition = aws_ecs_task_definition.ecs_task.arn
+#   desired_count   = 2
 #   launch_type     = "FARGATE"
 
 #   network_configuration {
 #     security_groups  = [aws_security_group.ecs_service_sg.id]
-#     subnets          = [module.vpc.subnet_ids["app-subnet-a"], module.vpc.subnet_ids["app-subnet-b"]]
+#     subnets          = [
+#       module.vpc.subnet_ids["app-subnet-a"],
+#       module.vpc.subnet_ids["app-subnet-b"]
+#     ]
 #     assign_public_ip = false
 #   }
 
 #   load_balancer {
-#     target_group_arn = "${aws_lb_target_group.iac_nginx_alb.id}"
+#     target_group_arn = aws_lb_target_group.iac_nginx_alb.id
 #     container_name   = "nginx-container"
-#     container_port   = "80"
+#     container_port   = 80
 #   }
 
-#   depends_on = ["aws_lb_listener.front_end"]
+#   service_registries {
+#     registry_arn = aws_service_discovery_service.nginx.arn
+#   }
+
+#   depends_on = [aws_lb_listener.front_end]
 # }
 
 # ################################################################################################################################################
@@ -143,9 +109,9 @@
 
 #   ingress {
 #     description      = "Allow HTTP from anywhere"
-#     from_port        = 80
-#     to_port          = 80
-#     protocol         = "tcp"
+#     from_port        = 0
+#     to_port          = 0
+#     protocol         = "-1"
 #     cidr_blocks      = ["0.0.0.0/0"]
 #   }
 
