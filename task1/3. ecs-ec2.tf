@@ -102,28 +102,43 @@ resource "aws_autoscaling_group" "ecs_asg" {
 }
 
 ################################################################################################################################################
-#                                                          Task Definitons                                                                     #
+#                                                          First Task Definitons                                                               #
 ################################################################################################################################################
 
 # define Task
-data "template_file" "template_container_definitions" {
-  template = "${file("container-definitions.json.tpl")}"
+data "template_file" "template_first_container_defintions" {
+  template = "${file("first-container-definitions.json.tpl")}"
 }
 
 resource "aws_ecs_task_definition" "ecs_task" {
-  family                   = "iac-ecs-task"
+  family                   = "iac-ecs-task1"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
   cpu                      = "512"
   memory                   = "1024"
-  container_definitions    = "${data.template_file.template_container_definitions.rendered}"
+  container_definitions    = "${data.template_file.template_first_container_defintions.rendered}"
 }
 
-resource "aws_cloudwatch_log_group" "ecs_log_group" {
-  name              = "/ecs/nginx"
-  retention_in_days = 7
+################################################################################################################################################
+#                                                          Second Task Definitons                                                              #
+################################################################################################################################################
+
+# define Task
+data "template_file" "template_second_container_defintions" {
+  template = "${file("second-container-definitions.json.tpl")}"
+}
+
+resource "aws_ecs_task_definition" "ecs_task" {
+  family                   = "iac-ecs-task2"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["EC2"]
+  cpu                      = "512"
+  memory                   = "1024"
+  container_definitions    = "${data.template_file.template_second_container_defintions.rendered}"
 }
 
 ########################################################################################################
