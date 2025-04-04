@@ -16,7 +16,8 @@
       "options": {
         "awslogs-group": "/ecs/nginx",
         "awslogs-region": "ap-northeast-2",
-        "awslogs-stream-prefix": "nginx"
+        "awslogs-stream-prefix": "nginx",
+        "awslogs-create-group": "true"
       }
     },
     "environment": [
