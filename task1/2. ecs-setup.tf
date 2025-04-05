@@ -70,3 +70,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_admin_attach" {
   role       = aws_iam_role.ecs_task_role.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
+
+################################################################################################################################################
+#                                                               ECS Cluster                                                                    #
+################################################################################################################################################
+
+resource "aws_ecs_cluster" "ecs_cluster" {
+  name = "iac-ecs-cluster"
+}

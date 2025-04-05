@@ -1,9 +1,9 @@
 [
   {
-    "cpu": 512,
+    "cpu": 256,
     "essential": true,
     "image": "nginx:latest",
-    "memory": 1024,
+    "memory": 512,
     "name": "nginx-container",
     "portMappings": [
       {
@@ -16,8 +16,7 @@
       "options": {
         "awslogs-group": "/ecs/nginx",
         "awslogs-region": "ap-northeast-2",
-        "awslogs-stream-prefix": "nginx",
-        "awslogs-create-group": "true"
+        "awslogs-stream-prefix": "nginx"
       }
     },
     "environment": [

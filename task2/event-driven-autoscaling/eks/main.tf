@@ -73,6 +73,7 @@ module "eks" {
     eks-pod-identity-agent = {}
     kube-proxy             = {}
     vpc-cni                = {}
+    metrics-server         = {}
   }
 
   cluster_security_group_additional_rules = {
@@ -85,7 +86,6 @@ module "eks" {
       type        = "ingress"
     }
   }
-
 
   enable_cluster_creator_admin_permissions = true
 
