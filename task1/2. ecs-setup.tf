@@ -1,33 +1,4 @@
 ################################################################################################################################################
-#                                                          Service Security Group                                                              #
-################################################################################################################################################
-
-resource "aws_security_group" "ecs_service_sg" {
-  name        = "ecs-service-sg"
-  description = "Security group for ECS service (allow HTTP from ALB)"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    description      = "Allow HTTP from ALB"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]  # 필요시 ALB SG로 제한 가능
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "ecs-service-sg"
-  }
-}
-
-################################################################################################################################################
 #                                                          Task Definitons - Role                                                              #
 ################################################################################################################################################
 
@@ -77,4 +48,71 @@ resource "aws_iam_role_policy_attachment" "ecs_task_admin_attach" {
 
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "iac-ecs-cluster"
+}
+
+################################################################################################################################################
+#                                                               CloudWatch Log Group                                                           #
+################################################################################################################################################
+
+resource "aws_cloudwatch_log_group" "ecs_log_group" {
+  name              = "/ecs/nginx"
+  retention_in_days = 7
+}
+
+################################################################################################################################################
+#                                                          Service Security Group                                                              #
+################################################################################################################################################
+
+resource "aws_security_group" "ecs_service_sg" {
+  name        = "ecs-service-sg"
+  description = "Security group for ECS service (allow HTTP from ALB)"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description      = "Allow HTTP from ALB"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]  # 필요시 ALB SG로 제한 가능
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "ecs-service-sg"
+  }
+}
+
+################################################################################################################################################
+#                                                          ALB Security Group                                                                  #
+################################################################################################################################################
+
+resource "aws_security_group" "web_server_sg" {
+  name        = "alb-sg"
+  description = "Security group for ALB (allow HTTP from internet)"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Allow HTTP from anywhere"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
 }

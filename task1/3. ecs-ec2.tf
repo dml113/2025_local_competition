@@ -92,11 +92,6 @@
 #   }
 # }
 
-# resource "aws_cloudwatch_log_group" "ecs_log_group" {
-#   name              = "/ecs/nginx"
-#   retention_in_days = 7
-# }
-
 # ################################################################################################################################################
 # #                                                          First Task Definition                                                               #
 # ################################################################################################################################################
@@ -308,35 +303,6 @@
 #     target_value       = 60.0
 #     scale_in_cooldown  = 60
 #     scale_out_cooldown = 60
-#   }
-# }
-
-# ################################################################################################################################################
-# #                                                          ALB Security Group                                                                  #
-# ################################################################################################################################################
-
-# resource "aws_security_group" "web_server_sg" {
-#   name        = "alb-sg"
-#   description = "Security group for ALB (allow HTTP from internet)"
-#   vpc_id      = module.vpc.vpc_id
-
-#   ingress {
-#     description = "Allow HTTP from anywhere"
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-
-#   tags = {
-#     Name = "alb-sg"
 #   }
 # }
 
