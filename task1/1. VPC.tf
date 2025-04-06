@@ -3,10 +3,10 @@
 ################################################################################################################################################
 # Import the VPC module to create a VPC
 module "vpc" {
-  source     = "./modules/vpc"    # Path to the VPC module
-  vpc_name   = "vpc"              # Name of the VPC
-  vpc_cidr   = "10.0.0.0/16"      # CIDR block for the VPC
-  create_igw = true               # No Internet Gateway for this VPC
+  source     = "./modules/vpc"            # Path to the VPC module
+  vpc_name   = locals.vpc.name        # Name of the VPC
+  vpc_cidr   = locals.vpc.cidr        # CIDR block for the VPC
+  create_igw = true                       # No Internet Gateway for this VPC
 
   # Subnet definitions for the database VPC
   subnets = {
