@@ -2,6 +2,8 @@
 #                                                                 EC2                                                                          #
 ################################################################################################################################################
 
+# aws ec2 describe-images --owners amazon --filters "Name=name,Values=al2023-ami-2023*" "Name=architecture,Values=x86_64" --query "Images[? !contains(Name, 'minimal')] | sort_by(@, &CreationDate) | [-1].ImageId" --output text
+
 module "ec2" {
   source = "./modules/EC2"
   bastion_name           = "bastion"
