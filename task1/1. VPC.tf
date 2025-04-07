@@ -1,32 +1,37 @@
+variable "project_name" {
+  type = string
+  default = "my"
+}
+
 ################################################################################################################################################
 #                                                                 VPC                                                                          #
 ################################################################################################################################################
 # Import the VPC module to create a VPC
 module "vpc" {
   source     = "./modules/vpc"            # Path to the VPC module
-  vpc_name   = "vpc"                      # Name of the VPC
+  vpc_name   = "${var.project_name}-vpc"                      # Name of the VPC
   vpc_cidr   = "10.0.0.0/16"              # CIDR block for the VPC
   create_igw = true                       # No Internet Gateway for this VPC
 
   # Subnet definitions for the database VPC
   subnets = {
-    "public-subnet-a"   = { name = "public-subnet-a", cidr = "10.0.0.0/24", az = "ap-northeast-2a", public = true }
-    "public-subnet-b"   = { name = "public-subnet-b", cidr = "10.0.1.0/24", az = "ap-northeast-2b", public = true }    
-    "app-subnet-a"      = { name = "app-subnet-a", cidr = "10.0.2.0/24", az = "ap-northeast-2a", public = false }
-    "app-subnet-b"      = { name = "app-subnet-b", cidr = "10.0.3.0/24", az = "ap-northeast-2b", public = false }
+    "public-subnet-a"   = { name = "${var.project_name}-pub-subnet-a", cidr = "10.0.0.0/24", az = "ap-northeast-2a", public = true }
+    "public-subnet-b"   = { name = "${var.project_name}-pub-subnet-b", cidr = "10.0.1.0/24", az = "ap-northeast-2b", public = true }    
+    "app-subnet-a"      = { name = "${var.project_name}-priv-subnet-a", cidr = "10.0.2.0/24", az = "ap-northeast-2a", public = false }
+    "app-subnet-b"      = { name = "${var.project_name}-priv-subnet-b", cidr = "10.0.3.0/24", az = "ap-northeast-2b", public = false }
   }
 
   # NAT Gateway configuration is omitted since there are no public subnets
   nat_gateways = { 
-    "app-natgw-a"       = { name = "app-natgw-a", subnet_id = "public-subnet-a" }
-    "app-natgw-b"       = { name = "app-natgw-b", subnet_id = "public-subnet-b" } 
+    "app-natgw-a"       = { name = "${var.project_name}-natgw-a", subnet_id = "public-subnet-a" }
+    "app-natgw-b"       = { name = "${var.project_name}-natgw-b", subnet_id = "public-subnet-b" } 
     }
 
   # Route table definitions for internal routing
   route_tables = {
-    "public-rt"         = "public-rt"
-    "app-rt-a"          = "app-rt-a"
-    "app-rt-b"          = "app-rt-b"
+    "public-rt"         = "${var.project_name}-pub-rt"
+    "app-rt-a"          = "${var.project_name}-priv-rt-a"
+    "app-rt-b"          = "${var.project_name}-priv-rt-b"
   }
 
   # No additional routes are defined
