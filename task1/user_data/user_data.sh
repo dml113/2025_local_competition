@@ -10,6 +10,8 @@ systemctl enable --now docker
 # sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config
 # systemctl restart sshd
 
+chown -R ec2-user app/
+
 mkdir /home/ec2-user/app
 
 cat <<EOF> /home/ec2-user/app/Dockerfile
