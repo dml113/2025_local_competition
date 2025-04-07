@@ -57,8 +57,8 @@
 #   load_balancer_type = "application"
 #   security_groups    = [aws_security_group.web_server_sg.id]
 #   subnets            = [
-#     module.vpc.subnet_ids["public-subnet-a"],
-#     module.vpc.subnet_ids["public-subnet-b"]
+#     module.vpc.subnet_ids["pub-subnet-a"],
+#     module.vpc.subnet_ids["pub-subnet-b"]
 #   ]
 # }
 

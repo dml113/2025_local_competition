@@ -30,7 +30,7 @@ resource "aws_route_table" "this" {
   for_each = var.route_tables
   vpc_id = aws_vpc.this.id
   tags = {
-    Name = each.key
+    Name = each.value
   }
 }
 

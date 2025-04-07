@@ -93,8 +93,8 @@
 #   network_configuration {
 #     security_groups  = [aws_security_group.ecs_service_sg.id]
 #     subnets          = [
-#       module.vpc.subnet_ids["app-subnet-a"],
-#       module.vpc.subnet_ids["app-subnet-b"]
+#       module.vpc.subnet_ids["priv-subnet-a"],
+#       module.vpc.subnet_ids["priv-subnet-b"]
 #     ]
 #     assign_public_ip = false
 #   }
@@ -126,8 +126,8 @@
 #   network_configuration {
 #     security_groups  = [aws_security_group.ecs_service_sg.id]
 #     subnets          = [
-#       module.vpc.subnet_ids["app-subnet-a"],
-#       module.vpc.subnet_ids["app-subnet-b"]
+#       module.vpc.subnet_ids["priv-subnet-a"],
+#       module.vpc.subnet_ids["priv-subnet-b"]
 #     ]
 #     assign_public_ip = false
 #   }

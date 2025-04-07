@@ -6,6 +6,7 @@
 #       memory                   = "512"
 #       network_mode             = "awsvpc"
 #       requires_compatibilities = ["EC2"]
+#       # EC2 or FARGATE
 #     }
 
 #     task_2 = {
@@ -14,6 +15,7 @@
 #       memory                   = "1024"
 #       network_mode             = "awsvpc"
 #       requires_compatibilities = ["EC2"]
+#       # EC2 or FARGATE
 #     }
 #   }
 # }
